@@ -1,0 +1,35 @@
+name: Ngrok Tunnel
+
+on:
+  workflow_dispatch: # bisa manual jalanin
+  push: # atau otomatis pas push
+    branches:
+      - main
+
+jobs:
+  expose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install ngrok
+        run: |
+          curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+          echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+          sudo apt update && sudo apt install ngrok -y
+
+      - name: Start web server (contoh di port 8080)
+        run: |
+          nohup python3 -m http.server 8080 &
+
+      - name: Run ngrok tunnel
+        run: |
+          ngrok config add-authtoken ${{ secrets.31aVzPS42Y35PCOoq8NdocNBYl9_69p7D1krWPiakn9R9uFK8}}
+          nohup ngrok http 8080 --log=stdout > ngrok.log &
+          sleep 5
+          cat ngrok.log | grep -o "https://[0-9a-zA-Z.-]*.ngrok-free.app" | head -n1 > ngrok_url.txt
+          echo "URL publik: $(cat ngrok_url.txt)"
+
+      - name: Output URL
+        run: cat ngrok_url.txt
