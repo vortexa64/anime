@@ -36,4 +36,5 @@ jobs:
 
       - name: Keep workflow alive (24 jam)
         run: sleep 86400      - name: Keep workflow alive (24 jam)
+        run: sleep 86400      - name: Keep workflow alive (24 jam)
         run: sleep 86400
