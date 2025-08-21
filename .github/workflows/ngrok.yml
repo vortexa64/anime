@@ -25,7 +25,7 @@ jobs:
 
       - name: Run ngrok tunnel
         run: |
-          ngrok config add-authtoken ${{ secrets.31aVzPS42Y35PCOoq8NdocNBYl9_69p7D1krWPiakn9R9uFK8}}
+          ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
           nohup ngrok http 8080 --log=stdout > ngrok.log &
           sleep 5
           cat ngrok.log | grep -o "https://[0-9a-zA-Z.-]*.ngrok-free.app" | head -n1 > ngrok_url.txt
