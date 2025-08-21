@@ -1,7 +1,7 @@
 name: Ngrok HTML Server
 
-on: 
-  workflow_dispatch:   # bisa kamu jalankan manual dari tab Actions
+on:
+  workflow_dispatch:   # Bisa dijalankan manual dari tab Actions
 
 jobs:
   serve:
@@ -17,7 +17,7 @@ jobs:
 
       - name: Start HTML server
         run: |
-          # kalau ada index.html di repo, bakal ke-serve di port 8080
+          # Kalau ada index.html di repo, bakal ke-serve di port 8080
           nohup python3 -m http.server 8080 &
 
       - name: Run ngrok tunnel
@@ -35,6 +35,4 @@ jobs:
           path: ngrok_url.txt
 
       - name: Keep workflow alive (24 jam)
-        run: sleep 86400      - name: Keep workflow alive (24 jam)
-        run: sleep 86400      - name: Keep workflow alive (24 jam)
         run: sleep 86400
