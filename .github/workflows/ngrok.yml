@@ -1,8 +1,7 @@
 name: Ngrok Safe Tunnel
 
 on:
-  workflow_dispatch:  # dijalankan manual
-  # bisa juga tambahin schedule kalau mau otomatis
+  workflow_dispatch:
 
 jobs:
   run:
@@ -10,11 +9,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Install Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
 
       - name: Install ngrok
         run: |
@@ -25,17 +19,16 @@ jobs:
       - name: Auth ngrok
         run: ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
 
-      - name: Start server
+      - name: Start server & ngrok
         run: |
           nohup python3 -m http.server 8080 &
-          sleep 5
-          nohup ngrok http 8080 > /dev/null &
+          sleep 3
+          nohup ngrok http 8080 --log=stdout > ngrok.log &
           sleep 10
           curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url'
 
-      - name: Keep alive 1 hour
+      - name: Keep alive (1h)
         run: |
-          echo "⏳ Server jalan selama 1 jam..."
+          echo "⏳ Server hidup 1 jam..."
           sleep 3600
-          echo "🛑 Waktu habis, server dimatikan otomatis."      - name: Keep workflow alive (24 jam)
-        run: sleep 86400
+          echo "🛑 Waktu habis, server mati otomatis."
