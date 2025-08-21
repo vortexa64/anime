@@ -1,13 +1,20 @@
-name: Ngrok HTML Server
+name: Ngrok Safe Tunnel
 
 on:
-  workflow_dispatch:   # Bisa dijalankan manual dari tab Actions
+  workflow_dispatch:  # dijalankan manual
+  # bisa juga tambahin schedule kalau mau otomatis
 
 jobs:
-  serve:
+  run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
       - name: Install ngrok
         run: |
@@ -15,24 +22,20 @@ jobs:
           echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
           sudo apt update && sudo apt install ngrok -y
 
-      - name: Start HTML server
+      - name: Auth ngrok
+        run: ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+
+      - name: Start server
         run: |
-          # Kalau ada index.html di repo, bakal ke-serve di port 8080
           nohup python3 -m http.server 8080 &
-
-      - name: Run ngrok tunnel
-        run: |
-          ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-          nohup ngrok http 8080 --log=stdout > ngrok.log &
+          sleep 5
+          nohup ngrok http 8080 > /dev/null &
           sleep 10
-          cat ngrok.log | grep -o "https://[0-9a-zA-Z.-]*.ngrok-free.app" | head -n1 > ngrok_url.txt
-          echo "🚀 Public URL: $(cat ngrok_url.txt)"
+          curl -s http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url'
 
-      - name: Save Ngrok URL to artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ngrok-link
-          path: ngrok_url.txt
-
-      - name: Keep workflow alive (24 jam)
+      - name: Keep alive 1 hour
+        run: |
+          echo "⏳ Server jalan selama 1 jam..."
+          sleep 3600
+          echo "🛑 Waktu habis, server dimatikan otomatis."      - name: Keep workflow alive (24 jam)
         run: sleep 86400
