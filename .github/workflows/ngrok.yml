@@ -7,7 +7,7 @@ jobs:
   serve:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install ngrok
         run: |
@@ -29,10 +29,11 @@ jobs:
           echo "🚀 Public URL: $(cat ngrok_url.txt)"
 
       - name: Save Ngrok URL to artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ngrok-link
           path: ngrok_url.txt
 
       - name: Keep workflow alive (24 jam)
+        run: sleep 86400      - name: Keep workflow alive (24 jam)
         run: sleep 86400
